@@ -1,3 +1,10 @@
+//*************************************************************
+//  Program Name: StereoReceiver.cpp
+//  Date: 11/10/2025
+//  Author: Micah Barnes
+//  Purpose: Implements the StereoReceiver class and its methods. Includes validation checks and throws exceptions for invalid input values.
+//*************************************************************
+
 #include "StereoReceiver.h"
 #include <iostream>
 using namespace std;
