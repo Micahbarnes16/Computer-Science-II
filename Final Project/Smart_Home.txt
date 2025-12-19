@@ -1,0 +1,3 @@
+[DEVICES]
+LIGHT|1|Bedroom Light|1|150|10|80
+[SCHEDULES]

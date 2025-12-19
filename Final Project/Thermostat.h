@@ -32,6 +32,11 @@ public:
 
     std::string serialize() const override;
 
+    // Accessors for UI/display
+    double getSetTemp() const { return setTempF; }
+    double getRuntime() const { return runtimeHoursPerDay; }
+    double getPowerKw() const { return hvacPowerKw; }
+
     static std::unique_ptr<SmartDevice> fromParts(const std::vector<std::string>& parts);
 };
 

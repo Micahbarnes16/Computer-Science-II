@@ -193,7 +193,66 @@ void SmartHomeController::toggleDevicePower() {
         throw ValidationError("Invalid power value.");
 
     d->togglePower(p == 1);
-    std::cout << "Power updated.\n";
+    std::cout << "Power updated." << "\n";
+}
+
+// ================= SCHEDULES =================
+void SmartHomeController::addSchedule() {
+    std::cout << "Enter device ID to add schedule: ";
+    int id;
+    std::cin >> id;
+
+    SmartDevice* d = findDeviceById(id);
+    if (!d)
+        throw InvalidOperation("Device not found.");
+
+    clearCin();
+    std::cout << "Enter time windows (HH:MM-HH:MM). Enter blank line to finish." << "\n";
+    Schedule newSch;
+    while (true) {
+        std::cout << "Window (or blank to finish): ";
+        std::string line;
+        std::getline(std::cin, line);
+        if (line.empty()) break;
+        auto dash = line.find('-');
+        if (dash == std::string::npos) {
+            std::cout << "Invalid format." << "\n";
+            continue;
+        }
+        try {
+            int s = parseTimeToMinutes(line.substr(0, dash));
+            int e = parseTimeToMinutes(line.substr(dash + 1));
+            newSch.addWindow(s, e);
+            std::cout << "Added window " << line << "." << "\n";
+        } catch (const std::exception& ex) {
+            std::cout << "ERROR: " << ex.what() << "\n";
+        }
+    }
+
+    if (newSch.getWindows().empty()) {
+        std::cout << "No windows were added; aborting." << "\n";
+        return;
+    }
+
+    auto it = schedulesByDeviceId.find(id);
+    if (it == schedulesByDeviceId.end()) {
+        schedulesByDeviceId[id] = newSch;
+    } else {
+        std::cout << "Device already has a schedule. Combine (c) or Replace (r)? ";
+        char c;
+        std::cin >> c;
+        if (c == 'c' || c == 'C') {
+            it->second = it->second + newSch;
+        } else if (c == 'r' || c == 'R') {
+            it->second = newSch;
+        } else {
+            std::cout << "Aborted schedule update." << "\n";
+            clearCin();
+            return;
+        }
+    }
+
+    std::cout << "Schedule updated. Current schedule: " << schedulesByDeviceId[id] << "\n";
 }
 
 // ================= USAGE STATS =================
